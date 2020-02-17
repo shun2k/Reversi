@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C45C88423FB22A70035A3D4 /* baseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45C88223FB22A70035A3D4 /* baseCell.swift */; };
+		5C45C88523FB22A70035A3D4 /* baseCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C45C88323FB22A70035A3D4 /* baseCell.xib */; };
+		5C45C88823FB26590035A3D4 /* setSE.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5C45C88623FB26590035A3D4 /* setSE.mp3 */; };
+		5C45C88923FB26590035A3D4 /* flip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5C45C88723FB26590035A3D4 /* flip.mp3 */; };
+		5CB6DD5D23F892A000C78F3B /* SuperRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB6DD5C23F892A000C78F3B /* SuperRule.swift */; };
+		5CB6DD5F23F892B600C78F3B /* Flip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB6DD5E23F892B600C78F3B /* Flip.swift */; };
+		5CB6DD6123F892CE00C78F3B /* Positionable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB6DD6023F892CE00C78F3B /* Positionable.swift */; };
+		5CB6DD6323F892E500C78F3B /* Opponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB6DD6223F892E500C78F3B /* Opponent.swift */; };
+		5CD20FB623F9DC5000B2B487 /* TransitionData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5CD20FB423F9DC5000B2B487 /* TransitionData.xcdatamodeld */; };
 		5CDFF8722390B91700C278BD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CDFF8712390B91700C278BD /* AppDelegate.swift */; };
 		5CDFF8742390B91700C278BD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CDFF8732390B91700C278BD /* SceneDelegate.swift */; };
 		5CDFF8762390B91700C278BD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CDFF8752390B91700C278BD /* ViewController.swift */; };
@@ -16,6 +25,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5C45C88223FB22A70035A3D4 /* baseCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = baseCell.swift; sourceTree = "<group>"; };
+		5C45C88323FB22A70035A3D4 /* baseCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = baseCell.xib; sourceTree = "<group>"; };
+		5C45C88623FB26590035A3D4 /* setSE.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = setSE.mp3; path = "../../../Pictures/reversi_img&SE/SE/setSE.mp3"; sourceTree = "<group>"; };
+		5C45C88723FB26590035A3D4 /* flip.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = flip.mp3; path = "../../../Pictures/reversi_img&SE/SE/flip.mp3"; sourceTree = "<group>"; };
+		5CB6DD5C23F892A000C78F3B /* SuperRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperRule.swift; sourceTree = "<group>"; };
+		5CB6DD5E23F892B600C78F3B /* Flip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flip.swift; sourceTree = "<group>"; };
+		5CB6DD6023F892CE00C78F3B /* Positionable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Positionable.swift; sourceTree = "<group>"; };
+		5CB6DD6223F892E500C78F3B /* Opponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Opponent.swift; sourceTree = "<group>"; };
+		5CD20FB523F9DC5000B2B487 /* TransitionData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TransitionData.xcdatamodel; sourceTree = "<group>"; };
 		5CDFF86E2390B91700C278BD /* Reversi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reversi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CDFF8712390B91700C278BD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5CDFF8732390B91700C278BD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -37,6 +55,37 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5CB6DD5A23F8925500C78F3B /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				5CDFF8752390B91700C278BD /* ViewController.swift */,
+				5CB6DD5C23F892A000C78F3B /* SuperRule.swift */,
+				5CB6DD5E23F892B600C78F3B /* Flip.swift */,
+				5CB6DD6023F892CE00C78F3B /* Positionable.swift */,
+				5CB6DD6223F892E500C78F3B /* Opponent.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		5CB6DD5B23F8926E00C78F3B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5CDFF8772390B91700C278BD /* Main.storyboard */,
+				5C45C88223FB22A70035A3D4 /* baseCell.swift */,
+				5C45C88323FB22A70035A3D4 /* baseCell.xib */,
+				5CDFF87C2390B91800C278BD /* LaunchScreen.storyboard */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		5CD20FB323F9DC2000B2B487 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5CD20FB423F9DC5000B2B487 /* TransitionData.xcdatamodeld */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		5CDFF8652390B91700C278BD = {
 			isa = PBXGroup;
 			children = (
@@ -56,13 +105,15 @@
 		5CDFF8702390B91700C278BD /* Reversi */ = {
 			isa = PBXGroup;
 			children = (
+				5C45C88723FB26590035A3D4 /* flip.mp3 */,
+				5C45C88623FB26590035A3D4 /* setSE.mp3 */,
 				5CDFF8712390B91700C278BD /* AppDelegate.swift */,
 				5CDFF8732390B91700C278BD /* SceneDelegate.swift */,
-				5CDFF8752390B91700C278BD /* ViewController.swift */,
-				5CDFF8772390B91700C278BD /* Main.storyboard */,
+				5CB6DD5A23F8925500C78F3B /* Controllers */,
+				5CB6DD5B23F8926E00C78F3B /* Views */,
 				5CDFF87A2390B91800C278BD /* Assets.xcassets */,
-				5CDFF87C2390B91800C278BD /* LaunchScreen.storyboard */,
 				5CDFF87F2390B91800C278BD /* Info.plist */,
+				5CD20FB323F9DC2000B2B487 /* Model */,
 			);
 			path = Reversi;
 			sourceTree = "<group>";
@@ -125,9 +176,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C45C88523FB22A70035A3D4 /* baseCell.xib in Resources */,
+				5C45C88823FB26590035A3D4 /* setSE.mp3 in Resources */,
 				5CDFF87E2390B91800C278BD /* LaunchScreen.storyboard in Resources */,
 				5CDFF87B2390B91800C278BD /* Assets.xcassets in Resources */,
 				5CDFF8792390B91700C278BD /* Main.storyboard in Resources */,
+				5C45C88923FB26590035A3D4 /* flip.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,7 +192,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CD20FB623F9DC5000B2B487 /* TransitionData.xcdatamodeld in Sources */,
+				5CB6DD6123F892CE00C78F3B /* Positionable.swift in Sources */,
 				5CDFF8762390B91700C278BD /* ViewController.swift in Sources */,
+				5C45C88423FB22A70035A3D4 /* baseCell.swift in Sources */,
+				5CB6DD6323F892E500C78F3B /* Opponent.swift in Sources */,
+				5CB6DD5D23F892A000C78F3B /* SuperRule.swift in Sources */,
+				5CB6DD5F23F892B600C78F3B /* Flip.swift in Sources */,
 				5CDFF8722390B91700C278BD /* AppDelegate.swift in Sources */,
 				5CDFF8742390B91700C278BD /* SceneDelegate.swift in Sources */,
 			);
@@ -294,7 +354,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = gzgz.Reversi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -312,7 +372,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = gzgz.Reversi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -338,6 +398,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		5CD20FB423F9DC5000B2B487 /* TransitionData.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				5CD20FB523F9DC5000B2B487 /* TransitionData.xcdatamodel */,
+			);
+			currentVersion = 5CD20FB523F9DC5000B2B487 /* TransitionData.xcdatamodel */;
+			path = TransitionData.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 5CDFF8662390B91700C278BD /* Project object */;
 }
