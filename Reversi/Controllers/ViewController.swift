@@ -105,7 +105,7 @@ class ViewController: UIViewController {
             layout.itemSize = CGSize(width: cellSize, height: cellSize)
             layout.minimumLineSpacing = 0
             layout.minimumInteritemSpacing = 0
-            layout.sectionInset = UIEdgeInsets(top: 150, left: floatMargin, bottom: 0, right: floatMargin)
+            layout.sectionInset = UIEdgeInsets(top: 2, left: floatMargin, bottom: 0, right: floatMargin)
             collectionView.collectionViewLayout = layout
             
             

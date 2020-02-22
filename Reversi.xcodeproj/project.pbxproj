@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C35B88823FDBE230008BD4D /* CustomLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C35B88723FDBE230008BD4D /* CustomLayout.swift */; };
 		5C45C88423FB22A70035A3D4 /* baseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45C88223FB22A70035A3D4 /* baseCell.swift */; };
 		5C45C88523FB22A70035A3D4 /* baseCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C45C88323FB22A70035A3D4 /* baseCell.xib */; };
 		5C45C88823FB26590035A3D4 /* setSE.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5C45C88623FB26590035A3D4 /* setSE.mp3 */; };
@@ -25,6 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5C35B88723FDBE230008BD4D /* CustomLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLayout.swift; sourceTree = "<group>"; };
 		5C45C88223FB22A70035A3D4 /* baseCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = baseCell.swift; sourceTree = "<group>"; };
 		5C45C88323FB22A70035A3D4 /* baseCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = baseCell.xib; sourceTree = "<group>"; };
 		5C45C88623FB26590035A3D4 /* setSE.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = setSE.mp3; path = "../../../Pictures/reversi_img&SE/SE/setSE.mp3"; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 			isa = PBXGroup;
 			children = (
 				5CDFF8752390B91700C278BD /* ViewController.swift */,
+				5C35B88723FDBE230008BD4D /* CustomLayout.swift */,
 				5CB6DD5C23F892A000C78F3B /* SuperRule.swift */,
 				5CB6DD5E23F892B600C78F3B /* Flip.swift */,
 				5CB6DD6023F892CE00C78F3B /* Positionable.swift */,
@@ -198,6 +201,7 @@
 				5C45C88423FB22A70035A3D4 /* baseCell.swift in Sources */,
 				5CB6DD6323F892E500C78F3B /* Opponent.swift in Sources */,
 				5CB6DD5D23F892A000C78F3B /* SuperRule.swift in Sources */,
+				5C35B88823FDBE230008BD4D /* CustomLayout.swift in Sources */,
 				5CB6DD5F23F892B600C78F3B /* Flip.swift in Sources */,
 				5CDFF8722390B91700C278BD /* AppDelegate.swift in Sources */,
 				5CDFF8742390B91700C278BD /* SceneDelegate.swift in Sources */,
