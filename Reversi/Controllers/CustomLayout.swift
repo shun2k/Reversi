@@ -8,26 +8,26 @@
 
 import UIKit
 
-class CustomLayout: UICollectionViewLayout {
-//    weak var delegate: CustomDelegate!
-    
-    var attributesArray = [UICollectionViewLayoutAttributes]()
-    
-    var contentSquare: CGFloat {
-        guard let collectionView = collectionView else { return 0 }
-        return collectionView.bounds.width - 40.0
-    }
-        
-    // contentエリアの設定
-    override var collectionViewContentSize: CGSize {
-        return CGSize(width: contentSquare, height: contentSquare)
-    }
-    
-    // セルの設定
-    override func prepare() {
-        guard attributesArray.isEmpty, let collectionView = collectionView else { return }
-        
-        let columnWidth = Int(collectionView.bounds.width / 8)
-    }
-        
-}
+//class CustomLayout: UICollectionViewLayout {
+////    weak var delegate: CustomDelegate!
+//
+//    var attributesArray = [UICollectionViewLayoutAttributes]()
+//
+//    var contentSquare: CGFloat {
+//        guard let collectionView = collectionView else { return 0 }
+//        return collectionView.bounds.width - 40.0
+//    }
+//
+//    // contentエリアの設定
+//    override var collectionViewContentSize: CGSize {
+//        return CGSize(width: contentSquare, height: contentSquare)
+//    }
+//
+//    // セルの設定
+//    override func prepare() {
+//        guard attributesArray.isEmpty, let collectionView = collectionView else { return }
+//
+//        let columnWidth = Int(collectionView.bounds.width / 8)
+//    }
+//
+//}

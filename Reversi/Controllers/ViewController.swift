@@ -133,8 +133,8 @@ class ViewController: UIViewController {
                 }
             }
             
-            whiteStones.text = "○ : \(white)"
-            blackStones.text = "● : \(black)"
+            whiteStones.text = String(white)
+            blackStones.text = String(black)
             
             if white + black == items.count * items.count {
                 if white < black {
@@ -204,7 +204,7 @@ class ViewController: UIViewController {
 
             // 手数を＋１する
             procedures += 1
-            procedure.text = "\(procedures)手"
+            procedure.text = String(procedures)
 
         }
         
@@ -283,7 +283,7 @@ class ViewController: UIViewController {
             saveTransition()
             
             // 攻撃側、手数の表示
-            procedure.text = "\(procedures)手"
+            procedure.text = String(procedures)
             attacker.text = "White"
         }
         
