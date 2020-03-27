@@ -295,6 +295,9 @@
                                                         <integer key="value" value="15"/>
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
+                                                <connections>
+                                                    <action selector="startButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jvD-YK-KVZ"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hDU-dz-tNb">
                                                 <rect key="frame" x="220" y="5" width="80" height="30"/>
@@ -311,6 +314,9 @@
                                                         <integer key="value" value="15"/>
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
+                                                <connections>
+                                                    <action selector="reverseButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tCz-Kx-2FP"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5s1-3a-PS6">
                                                 <rect key="frame" x="120" y="5" width="80" height="30"/>
@@ -327,6 +333,9 @@
                                                         <integer key="value" value="15"/>
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
+                                                <connections>
+                                                    <action selector="passButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="vuW-6l-Vge"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -370,6 +379,8 @@
                         <outlet property="attacker" destination="uCO-m5-hxN" id="ftV-Gn-htE"/>
                         <outlet property="blackStones" destination="ZLY-6r-99e" id="GlN-Tu-8JM"/>
                         <outlet property="collectionView" destination="Aqh-Rc-sR1" id="Bvq-XG-AWg"/>
+                        <outlet property="message" destination="Phy-tH-NHA" id="PLa-zS-4tk"/>
+                        <outlet property="passButton" destination="5s1-3a-PS6" id="dd3-If-egF"/>
                         <outlet property="procedure" destination="Rl5-bY-Xli" id="h7M-25-zmo"/>
                         <outlet property="reverseButton" destination="hDU-dz-tNb" id="nlq-0a-L3w"/>
                         <outlet property="startButton" destination="C3v-vm-03W" id="79S-Mj-473"/>

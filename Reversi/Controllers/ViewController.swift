@@ -20,8 +20,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var startButton: UIButton!
     @IBOutlet weak var whiteStones: UILabel!
     @IBOutlet weak var blackStones: UILabel!
-    
-    
+    @IBOutlet weak var passButton: UIButton!
+    @IBOutlet weak var message: UILabel!
     
     
     
@@ -196,10 +196,10 @@ class ViewController: UIViewController {
             myAttackTurn = !myAttackTurn
             // 手を表示
             if myAttackTurn == true {
-                attacker.text = "White"
+                attacker.text = "あなたの番です"
             }
             else if myAttackTurn == false {
-                attacker.text = "Black"
+                attacker.text = "相手の番です"
             }
 
             // 手数を＋１する
@@ -284,7 +284,7 @@ class ViewController: UIViewController {
             
             // 攻撃側、手数の表示
             procedure.text = String(procedures)
-            attacker.text = "White"
+            attacker.text = "あなたの番です"
         }
         
         // 指定したデータの削除
@@ -307,10 +307,51 @@ class ViewController: UIViewController {
                 print("deleteData is error : ", error)
             }
         }
-        
+ 
+    
+        // 初めからボタン
+        @IBAction func startButtonPressed(_ sender: UIButton) {
+            let alert = UIAlertController(title: "CAUTION!", message: "今のゲームを破棄しますか？", preferredStyle: .alert)
+            let action = UIAlertAction(title: "はい", style: .default) { (action) in
+                // 初期状態を変数に入れる
+                self.items = [
+                [0, 0, 0, 0, 0, 0, 0,0],
+                [0, 0, 0, 0, 0, 0, 0,0],
+                [0, 0, 0, 0, 0, 0, 0,0],
+                [0, 0, 0, 1, 2, 0, 0,0],
+                [0, 0, 0, 2, 1, 0, 0,0],
+                [0, 0, 0, 0, 0, 0, 0,0],
+                [0, 0, 0, 0, 0, 0, 0,0],
+                [0, 0, 0, 0, 0, 0, 0,0]
+                ]
+                
+                self.procedures = 0
+                self.myAttackTurn = true
+                
+                // core data に初期状態の情報を保存
+                self.saveTransition()
+                
+                // これまでの進行状況をcore data から破棄
+                self.firstSet()
+                self.collectionView.reloadData()
+                self.totalStones()
+                
+            }
+            let noAction = UIAlertAction(title: "いいえ", style: .cancel, handler: nil)
+            alert.addAction(action)
+            alert.addAction(noAction)
+            present(alert, animated: true, completion: nil)
+        }
+    
+    
+        // パスボタン
+        @IBAction func passButtonPressed(_ sender: UIButton) {
+            
+        }
+    
+    
         // 一つ前の石の配置に戻す
         @IBAction func reverseButtonPressed(_ sender: UIButton) {
-            
             // 手が０の時処理しない
             if procedures == 0 {
                 return
@@ -349,13 +390,13 @@ class ViewController: UIViewController {
             
             // contextからのデータを元に手を表示
             if myAttackTurn == true {
-                attacker.text = "White"
+                attacker.text = "あなたの番です"
             } else {
-                attacker.text = "Black"
+                attacker.text = "相手の番です"
             }
             
             // 手数を表示する
-            procedure.text = "\(procedures)手"
+            procedure.text = String(procedures)
             
             // 配置をcontextで取得したdataの通りにする
             for i in 0 ..< items.count {
