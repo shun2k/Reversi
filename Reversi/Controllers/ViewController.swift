@@ -72,7 +72,8 @@ class ViewController: UIViewController {
     // 自分の攻撃であるかどうか
     var myAttackTurn = true
     
-    // messageの初期化
+    // passの有無の初期化
+    var presenceOfPass = false
     
     // 勝敗が決したがどうか
     var gameSet = false
@@ -87,7 +88,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         // 初期化
-//            firstSet()
+        firstSet()
        
         totalStones()
         
@@ -117,6 +118,32 @@ class ViewController: UIViewController {
             print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
         message.text = Message.MyTurn.rawValue
+    }
+    
+    // Messageの表示を決めるメソッド
+    func setMessage(doPass: Int) -> Int {
+        var reValue = 0
+        switch doPass {
+        case 0:
+            self.message.text = Message.MyTurn.rawValue
+            reValue = 0
+        case 1:
+            self.message.text = Message.OppTurn.rawValue
+            reValue = 1
+        case 2:
+            self.message.text = Message.NotPutOnMyTurn.rawValue
+            self.dataUpdate()
+            self.playSound(name: "notice")
+            reValue = 1
+        case 3:
+            self.message.text = Message.NotPutOnOppTurn.rawValue
+            self.dataUpdate()
+            self.playSound(name: "notice")
+            reValue =  0
+        default:
+            break
+        }
+        return reValue
     }
     
     // 石の数集計
@@ -162,52 +189,26 @@ class ViewController: UIViewController {
         if allSearch.searchAll() == 0 && !gameSet {
             // 自ターン後の場合 myAttackはfalseになっている
             switch myAttackTurn {
-            case true:
-                doPass = 1
-                message.text = Message.NotPutOnMyTurn.rawValue
-                collectionView.allowsSelection = false
-            case false:
-                doPass = 0
-                message.text = Message.NotPutOnOppTurn.rawValue
+            case true:  // 自分がパスする場合、presenceOfPassをtrueとする
+                doPass = 2
+                // 今の手数をキーにcoredataからデータを抽出し、presenceOfPassをtrueに更新する
+                coredataUpdate(procedures: procedures)
+            
+            case false: // 相手がパスする場合
+                doPass = 3
                 
             }
-            // 攻守交代
-            self.dataUpdate()
-            
-            
-// アラート処理 **************************
-//            let alert = UIAlertController(title: "CAUTION!", message: "置ける場所がありません！", preferredStyle: .alert)
-//            let action = UIAlertAction(title: "パスする", style: .default) { (action) in
-//                if self.myAttackTurn == true {
-//                    doPass = 1
-//                    print("こっちじゃない")
-//                } else if self.myAttackTurn == false {
-//                    doPass = 0
-//                    print("これよね")
-//                }
-//                // 攻守交代
-//                self.dataUpdate()
-//                // 一度セーブしないと、戻るボタンをした時にエラーが発生する
-//                self.saveTransition()
-//
-//            }
-//            alert.addAction(action)
-//            present(alert, animated: true, completion: nil)
-// アラート処理終わり *************************
-            
+           
+        // パスが必要ない場合
         } else {
             // 通常のプロセス
             doPass = observedValue
-            if doPass == 0 {
-                message.text = Message.MyTurn.rawValue
-            } else {
-                message.text = Message.OppTurn.rawValue
-                sleep(1)
-            }
         }
-       
+        
         return doPass
     }
+    
+    
     
     //情報の更新、Context保存
     func  dataUpdate()  {
@@ -226,10 +227,35 @@ class ViewController: UIViewController {
         }
         
         self.saveTransition()
-
+        
+        // 一度パスしたことを考慮した場合passの有無をfalseに戻す
+        presenceOfPass = false
         
 
     }
+    
+    // core data の情報の更新、パスする際にpresenceOfPassをtrueに更新するためのメソッド
+    func coredataUpdate(procedures: Int16) {
+        let request : NSFetchRequest<TransitionData> = TransitionData.fetchRequest()
+        let predicate = NSPredicate(format: "%K = %d", "procedure", procedures)
+        request.predicate = predicate
+
+        do {
+            // predicateの内容で抽出し、データを更新
+            requestTransitionData = try context.fetch(request)
+            for data in requestTransitionData {
+                data.presenceOfPass = true
+            }
+            // context保存
+            try context.save()
+            
+
+        } catch {
+            print("Error update from context \(error)")
+        }
+
+    }
+    
     
     // contextをcore dataに保存する
     func saveTransition() {
@@ -237,6 +263,7 @@ class ViewController: UIViewController {
         let newTransition = TransitionData(context: self.context)
         newTransition.offenceSide = myAttackTurn
         newTransition.procedure = procedures
+        newTransition.presenceOfPass = presenceOfPass
         var position = ""
         for i in 0 ..< items.count {
             for j in 0 ..< items[i].count {
@@ -250,7 +277,7 @@ class ViewController: UIViewController {
         } catch {
             print("Error saving context \(error)")
         }
-//        self.collectionView.reloadData()
+
     }
     
     // core dataのcontextを呼び出す
@@ -267,6 +294,7 @@ class ViewController: UIViewController {
         let item = requestTransitionData[Int(procedures)]
         myAttackTurn = item.offenceSide
         procedures = item.procedure
+        presenceOfPass = item.presenceOfPass
         // 配列入れる
         let positions = item.positionArray
         
@@ -350,6 +378,7 @@ class ViewController: UIViewController {
             
             self.procedures = 0
             self.myAttackTurn = true
+            self.presenceOfPass = false
             
             // core data に初期状態の情報を保存
             self.saveTransition()
@@ -369,11 +398,11 @@ class ViewController: UIViewController {
 
     // パスボタン
     @IBAction func passButtonPressed(_ sender: UIButton) {
-       collectionView.allowsSelection = true
+        coredataUpdate(procedures: procedures)
     }
 
 
-    // 一つ前の石の配置に戻す
+    //戻るボタンの処理
     @IBAction func reverseButtonPressed(_ sender: UIButton) {
         // 手が０の時処理しない
         if procedures == 0 {
@@ -382,34 +411,40 @@ class ViewController: UIViewController {
         
         let request : NSFetchRequest<TransitionData> = TransitionData.fetchRequest()
         let deleteIndex = procedures
-        
-        // procedures番目 を -2 したデータを呼び出し、ロードする
-        let index = procedures - 2
-        let predicate = NSPredicate(format: "procedure = %d", index)
+        // contextにStringで保存した石の配列データを入れる変数
         var positions = ""
         
         
-        request.predicate = predicate
         
-        do {
-            requestTransitionData = try context.fetch(request)
-            for data in requestTransitionData {
-                myAttackTurn = data.value(forKey: "offenceSide") as! Bool
-                procedures = data.value(forKey: "procedure") as! Int16
-                positions = data.value(forKey: "positionArray") as! String
+        repeat {
+            // procedures番目 を -2 したデータを呼び出し、ロードする
+            print("ループスタート時のprocedures: \(procedures)")
+            let index = procedures - 2
+            let predicate = NSPredicate(format: "procedure = %d", index)
+            request.predicate = predicate
+            do {
+                requestTransitionData = try context.fetch(request)
+                for data in requestTransitionData {
+                    myAttackTurn = data.value(forKey: "offenceSide") as! Bool
+                    procedures = data.value(forKey: "procedure") as! Int16
+                    positions = data.value(forKey: "positionArray") as! String
+                    presenceOfPass = data.value(forKey: "presenceOfPass") as! Bool
+                }
+            } catch {
+                print("Error fetching data from context \(error)")
             }
-        } catch {
-            print("Error fetching data from context \(error)")
-        }
+            
+            // procedure番目のデータを削除する
+            deleteData(pros: deleteIndex)
+            do {
+                try context.save()
+            } catch {
+                print("\(error)")
+            }
+            print("presenceOfPass:", presenceOfPass, "ループ終盤のprocedures: \(procedures)")
+        } while presenceOfPass
         
-        var count = 0
-        
-        let start = positions.startIndex
-         
-        print("check!!!!")
-        
-        print(procedures)
-        print(myAttackTurn)
+ //     contextから取り出したデータを画面に表示する
         
         // contextからのデータを元に手を表示
         if myAttackTurn == true {
@@ -422,6 +457,10 @@ class ViewController: UIViewController {
         procedure.text = String(procedures)
         
         // 配置をcontextで取得したdataの通りにする
+        var count = 0
+        
+        let start = positions.startIndex
+        
         for i in 0 ..< items.count {
             for j in 0 ..< items[i].count {
                 let off = positions.index(start, offsetBy: count)
@@ -436,13 +475,7 @@ class ViewController: UIViewController {
         totalStones()
         collectionView.reloadData()
         
-        // procedure番目のデータを削除する
-        deleteData(pros: deleteIndex)
-        do {
-            try context.save()
-        } catch {
-            print("\(error)")
-        }
+        
     }
     
     // 勝敗表示
@@ -544,22 +577,31 @@ extension ViewController: UICollectionViewDelegate {
         
         // プロパティ監視、observedが1以上の場合、opponentの番
         var observed : Int = 0 {
+            
             didSet(oldValue) {
+                
                 if(observed == 1) {
-                    print("observedが１の時")
-                    if myAttackTurn == false {
-                        // 黒が置ける場所があるか確認と処理
-                        observed = pass(observedValue: observed)
-                        print("observed")
 
+                    if myAttackTurn == false {
+                        
                         let opponent = Opponent(arrays: items)
                         opponent.checkAndFlip()
                         items = opponent.getItems()
 
                         totalStones()
+                        
                         dataUpdate()
-//                        saveTransition()
-                        sleep(2)
+                        
+                        // ひっくり返る場所を取得する
+                        let otherFlips = opponent.getAnimesItems()
+                        // 変化させるIndexPathを入れる配列型
+                        var indexPathes = [IndexPath]()
+                        
+                        let dopass = self.pass(observedValue: 0)
+                        
+                        var setMessageValue = 0
+                      
+                        
                         // アニメーション処理
                         UIView.animate(withDuration: 0, animations: {
                             //opponentが石を置く場所を取得する
@@ -570,13 +612,14 @@ extension ViewController: UICollectionViewDelegate {
 
                             // 音を再生
                             self.playSound(name: "setSE")
+                            
+                            // 対応するMessageを表示する。
+                            setMessageValue = self.setMessage(doPass: dopass)
+                            
 
                         })
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // ひっくり返る場所を取得する
-                            let otherFlips = opponent.getAnimesItems()
-                            // 変化させるIndexPathを入れる配列型
-                            var indexPathes = [IndexPath]()
+                            
 
                             for otherFlip in otherFlips {
                                 indexPathes.append(IndexPath(item: otherFlip, section: 0))
@@ -590,35 +633,41 @@ extension ViewController: UICollectionViewDelegate {
                                 self.playSound(name: "flip")
 
                             }, completion: {(finished : Bool) in
-                                observed = self.pass(observedValue: 0)
+                                sleep(2)
+                                observed = setMessageValue
                             })
                         }
-//
-//                        // 白が置ける場所があるか確認と処理
-//                        observed = pass(observedValue: observed)
                     }
 
                 }
             }
         }
+        
 
        
         // ひっくり返すことができ、かつ置き場所に何もないことが確認された場合の処理を書く
         if availableArea > 0 && items[indexPath.row / items.count][indexPath.row % items.count] == 0 {
                
-            // Flip class Test
-                
+            // タッチした場所から相手の番に移るための処理
             flip.flipPosition(row: indexPath.row / items.count, col: indexPath.row % items.count, myAttackTurn: myAttackTurn)
                 
             items = flip.getItems()
             
             
-            // 手数と攻守の情報を更新
+            // 手数と攻守の情報を更新とitems配列をcoredataに保存
             dataUpdate()
                 
             totalStones()
             
-            message.text = Message.OppTurn.rawValue
+            // アニメーション処理のための準備
+            let otherFlips = flip.getAnimesItems()
+            // 変化させるIndexPathを入れる配列型
+            var indexPathes = [IndexPath]()
+            
+            // パスする必要があるかを確認
+            let dopass = self.pass(observedValue: 1)
+            
+            var setMessageValue = 0
             
             // アニメーション処理 （時間を遅らせないとUIアニメーションが実行される前にデータが更新され不具合が出る）
                 
@@ -629,13 +678,12 @@ extension ViewController: UICollectionViewDelegate {
                 
                 // 音を再生
                 self.playSound(name: "setSE")
+                
+                // 対応するMessageを表示する。
+                setMessageValue = self.setMessage(doPass: dopass)
 
             })
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    
-                let otherFlips = flip.getAnimesItems()
-                // 変化させるIndexPathを入れる配列型
-                var indexPathes = [IndexPath]()
                     
                 for otherFlip in otherFlips {
                     indexPathes.append(IndexPath(item: otherFlip, section: 0))
@@ -649,9 +697,8 @@ extension ViewController: UICollectionViewDelegate {
                     self.playSound(name: "flip")
                           
                 }, completion: {(finished : Bool) in
-                    
-                    
-                    observed = self.pass(observedValue: 1)
+                    sleep(2)
+                    observed = setMessageValue
                     
                 })
             }

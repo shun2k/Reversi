@@ -6,6 +6,8 @@
 //  Copyright © 2020 岸本俊祐. All rights reserved.
 //
 
+// ユーザーがタッチした場所に石を置けるかどうかを調べるためのクラス
+
 import Foundation
 
 class SuperRule {

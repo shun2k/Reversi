@@ -12,6 +12,7 @@
 		5C45C88523FB22A70035A3D4 /* baseCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C45C88323FB22A70035A3D4 /* baseCell.xib */; };
 		5C45C88823FB26590035A3D4 /* setSE.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5C45C88623FB26590035A3D4 /* setSE.mp3 */; };
 		5C45C88923FB26590035A3D4 /* flip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5C45C88723FB26590035A3D4 /* flip.mp3 */; };
+		5C756A1324381ACD001D71E4 /* notice.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5C756A1224381ACD001D71E4 /* notice.mp3 */; };
 		5CB6DD5D23F892A000C78F3B /* SuperRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB6DD5C23F892A000C78F3B /* SuperRule.swift */; };
 		5CB6DD5F23F892B600C78F3B /* Flip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB6DD5E23F892B600C78F3B /* Flip.swift */; };
 		5CB6DD6123F892CE00C78F3B /* Positionable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB6DD6023F892CE00C78F3B /* Positionable.swift */; };
@@ -32,6 +33,7 @@
 		5C45C88323FB22A70035A3D4 /* baseCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = baseCell.xib; sourceTree = "<group>"; };
 		5C45C88623FB26590035A3D4 /* setSE.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = setSE.mp3; path = "../../../Pictures/reversi_img&SE/SE/setSE.mp3"; sourceTree = "<group>"; };
 		5C45C88723FB26590035A3D4 /* flip.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = flip.mp3; path = "../../../Pictures/reversi_img&SE/SE/flip.mp3"; sourceTree = "<group>"; };
+		5C756A1224381ACD001D71E4 /* notice.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = notice.mp3; path = "../../../Pictures/reversi_img&SE/SE/notice.mp3"; sourceTree = "<group>"; };
 		5CB6DD5C23F892A000C78F3B /* SuperRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperRule.swift; sourceTree = "<group>"; };
 		5CB6DD5E23F892B600C78F3B /* Flip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flip.swift; sourceTree = "<group>"; };
 		5CB6DD6023F892CE00C78F3B /* Positionable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Positionable.swift; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 		5CDFF8702390B91700C278BD /* Reversi */ = {
 			isa = PBXGroup;
 			children = (
+				5C756A1224381ACD001D71E4 /* notice.mp3 */,
 				5C45C88723FB26590035A3D4 /* flip.mp3 */,
 				5C45C88623FB26590035A3D4 /* setSE.mp3 */,
 				5CDFF8712390B91700C278BD /* AppDelegate.swift */,
@@ -188,6 +191,7 @@
 				5CDFF87B2390B91800C278BD /* Assets.xcassets in Resources */,
 				5CDFF8792390B91700C278BD /* Main.storyboard in Resources */,
 				5C45C88923FB26590035A3D4 /* flip.mp3 in Resources */,
+				5C756A1324381ACD001D71E4 /* notice.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
