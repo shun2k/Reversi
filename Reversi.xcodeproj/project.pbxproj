@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5C35B88823FDBE230008BD4D /* CustomLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C35B88723FDBE230008BD4D /* CustomLayout.swift */; };
+		5C087F4B24A7E248005BA5C6 /* GameFlowPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C087F4A24A7E248005BA5C6 /* GameFlowPresenter.swift */; };
+		5C087F4D24A925F3005BA5C6 /* GameRuleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C087F4C24A925F3005BA5C6 /* GameRuleModel.swift */; };
 		5C45C88423FB22A70035A3D4 /* baseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45C88223FB22A70035A3D4 /* baseCell.swift */; };
 		5C45C88523FB22A70035A3D4 /* baseCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C45C88323FB22A70035A3D4 /* baseCell.xib */; };
 		5C45C88823FB26590035A3D4 /* setSE.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5C45C88623FB26590035A3D4 /* setSE.mp3 */; };
@@ -24,11 +25,11 @@
 		5CDFF8792390B91700C278BD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5CDFF8772390B91700C278BD /* Main.storyboard */; };
 		5CDFF87B2390B91800C278BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5CDFF87A2390B91800C278BD /* Assets.xcassets */; };
 		5CDFF87E2390B91800C278BD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5CDFF87C2390B91800C278BD /* LaunchScreen.storyboard */; };
-		5CE4475B24370C6500F6A5C8 /* GameSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE4475A24370C6500F6A5C8 /* GameSet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5C35B88723FDBE230008BD4D /* CustomLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLayout.swift; sourceTree = "<group>"; };
+		5C087F4A24A7E248005BA5C6 /* GameFlowPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFlowPresenter.swift; sourceTree = "<group>"; };
+		5C087F4C24A925F3005BA5C6 /* GameRuleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameRuleModel.swift; sourceTree = "<group>"; };
 		5C45C88223FB22A70035A3D4 /* baseCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = baseCell.swift; sourceTree = "<group>"; };
 		5C45C88323FB22A70035A3D4 /* baseCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = baseCell.xib; sourceTree = "<group>"; };
 		5C45C88623FB26590035A3D4 /* setSE.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = setSE.mp3; path = "../../../Pictures/reversi_img&SE/SE/setSE.mp3"; sourceTree = "<group>"; };
@@ -47,7 +48,6 @@
 		5CDFF87A2390B91800C278BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5CDFF87D2390B91800C278BD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5CDFF87F2390B91800C278BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5CE4475A24370C6500F6A5C8 /* GameSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,12 +61,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5C087F4924A7DFF6005BA5C6 /* Presenters */ = {
+			isa = PBXGroup;
+			children = (
+				5C087F4A24A7E248005BA5C6 /* GameFlowPresenter.swift */,
+			);
+			path = Presenters;
+			sourceTree = "<group>";
+		};
 		5CB6DD5A23F8925500C78F3B /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				5CDFF8752390B91700C278BD /* ViewController.swift */,
-				5CE4475A24370C6500F6A5C8 /* GameSet.swift */,
-				5C35B88723FDBE230008BD4D /* CustomLayout.swift */,
 				5CB6DD5C23F892A000C78F3B /* SuperRule.swift */,
 				5CB6DD5E23F892B600C78F3B /* Flip.swift */,
 				5CB6DD6023F892CE00C78F3B /* Positionable.swift */,
@@ -90,6 +96,7 @@
 			isa = PBXGroup;
 			children = (
 				5CD20FB423F9DC5000B2B487 /* TransitionData.xcdatamodeld */,
+				5C087F4C24A925F3005BA5C6 /* GameRuleModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -118,6 +125,7 @@
 				5C45C88623FB26590035A3D4 /* setSE.mp3 */,
 				5CDFF8712390B91700C278BD /* AppDelegate.swift */,
 				5CDFF8732390B91700C278BD /* SceneDelegate.swift */,
+				5C087F4924A7DFF6005BA5C6 /* Presenters */,
 				5CB6DD5A23F8925500C78F3B /* Controllers */,
 				5CB6DD5B23F8926E00C78F3B /* Views */,
 				5CDFF87A2390B91800C278BD /* Assets.xcassets */,
@@ -208,8 +216,8 @@
 				5C45C88423FB22A70035A3D4 /* baseCell.swift in Sources */,
 				5CB6DD6323F892E500C78F3B /* Opponent.swift in Sources */,
 				5CB6DD5D23F892A000C78F3B /* SuperRule.swift in Sources */,
-				5C35B88823FDBE230008BD4D /* CustomLayout.swift in Sources */,
-				5CE4475B24370C6500F6A5C8 /* GameSet.swift in Sources */,
+				5C087F4B24A7E248005BA5C6 /* GameFlowPresenter.swift in Sources */,
+				5C087F4D24A925F3005BA5C6 /* GameRuleModel.swift in Sources */,
 				5CB6DD5F23F892B600C78F3B /* Flip.swift in Sources */,
 				5CDFF8722390B91700C278BD /* AppDelegate.swift in Sources */,
 				5CDFF8742390B91700C278BD /* SceneDelegate.swift in Sources */,
