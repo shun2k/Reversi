@@ -114,7 +114,7 @@ extension ViewController: UICollectionViewDataSource {
         cell.contentView.layer.borderWidth = 1
         
         // cellのカラー
-        cell.contentView.backgroundColor = UIColor.cyan
+        cell.contentView.backgroundColor = UIColor.init(red: 0.06, green: 0.67, blue: 0.52, alpha: 1.00)
         
         //カスタムセルに画像を貼り付ける、配列に対応させる。配列の値が1または２以外では.noneとする。これがないと表示がおかしくなる
         let imageName = cell.cellStoneChenger(items: presenter.getItems(), indexPath: indexPath.row)
