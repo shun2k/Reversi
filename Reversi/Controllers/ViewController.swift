@@ -75,7 +75,7 @@ class ViewController: UIViewController {
     //MARK:  Restart Button
     @IBAction func startButtonPressed(_ sender: UIButton) {
         
-        presenter.firstSet()
+        self.message.text = presenter.firstSet()
     }
 
     

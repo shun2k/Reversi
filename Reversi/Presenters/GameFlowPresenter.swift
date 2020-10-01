@@ -21,7 +21,7 @@ protocol GameFlowPresenterInput {
     
     func didSelectCell(row: Int)   // 盤面を選択した時のため
     func pickUpLatestInformation()  //立ち上げた時にデータを取得するためのもの
-    func firstSet()
+    func firstSet() -> String
     func reverse()          // 戻るボタンの処理
     func getTurn() -> Bool
     func getItems() -> [[Int]]
@@ -231,15 +231,16 @@ final class GameFlowPresenter: GameFlowPresenterInput {
     }
     
     //MARK: fristSet Method - 初期化させるボタンのメソッド
-    func firstSet() {
+    func firstSet() -> String {
         model.resetGame() { (result) in
             self.itemsArray = result.itemData
             self.myTurn = result.turns
             self.procedure = result.procedure
             self.presenceOfPass = result.presenceOfPassed
             self.view.updateInformation(myAttackTurn: self.myTurn, procedures: self.procedure, items: self.itemsArray, selectRow: result.selectRow)
+            
         }
-        
+        return Message.MyTurn.rawValue
     }
     
     //MARK: reverse Method - １つ前に戻すメソッド
