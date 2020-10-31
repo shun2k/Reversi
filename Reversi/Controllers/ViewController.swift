@@ -7,9 +7,7 @@
 //
 
 import UIKit
-import CoreData
 import AVFoundation
-
 
 class ViewController: UIViewController {
     
@@ -23,80 +21,29 @@ class ViewController: UIViewController {
     @IBOutlet weak var passButton: UIButton!
     @IBOutlet weak var message: UILabel!
     
-    enum Message: String {
-        case MyTurn = "置きたい場所をタッチしてください"
-        case OppTurn = "相手の番です。お待ちください"
-        case NotPutOnMyTurn = "置く場所ありません、相手の番になります"
-        case NotPutOnOppTurn = "相手は置く場所がありません"
-        case Win = "あなたの勝ちです"
-        case Lose = "あなたの負けです"
-    }
-    
-
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        
-    // core Dataのcontextからのrequestを受け取るための変数
-    var requestTransitionData = [TransitionData]()
         
     // 再生する音のインスタンス
-    var audioPlayer : AVAudioPlayer! = nil
-        
-    //    // 石の配置
-//    var items = [
-//    [0, 0, 0, 0, 0, 0, 0,0],
-//    [0, 0, 0, 0, 0, 0, 0,0],
-//    [0, 0, 0, 0, 0, 0, 0,0],
-//    [0, 0, 0, 1, 2, 0, 0,0],
-//    [0, 0, 0, 2, 1, 0, 0,0],
-//    [0, 0, 0, 0, 0, 0, 0,0],
-//    [0, 0, 0, 0, 0, 0, 0,0],
-//    [0, 0, 0, 0, 0, 0, 0,0]
-//    ]
-            
-            // pass()を調べるために配置
-            var items = [
-            [0, 0, 0, 1, 0, 2, 2, 2],
-            [2, 0, 0, 1, 1, 2, 2, 2],
-            [1, 0, 0, 1, 1, 2, 2, 2],
-            [0, 0, 0, 1, 1, 2, 2, 2],
-            [0, 0, 0, 1, 1, 2, 2, 2],
-            [0, 0, 0, 1, 1, 2, 2, 2],
-            [0, 0, 0, 1, 2, 2, 2, 2],
-            [0, 0, 0, 1, 2, 2, 2, 2]
-            ]
-            
-            
-    // 手数 Int16 はAttributeのデータ型に合わせている
-    var procedures : Int16 = 0
+    private var audioPlayer : AVAudioPlayer! = nil
     
-    // 自分の攻撃であるかどうか
-    var myAttackTurn = true
+    // MVP - GameFlowPresenter導入する
+    private var presenter: GameFlowPresenterInput!
+    private let model = GameModel()
     
-    // passの有無の初期化
-    var presenceOfPass = false
+    private let resultIdentifier = "reuseIdentifier"
     
-    // 勝敗が決したがどうか
-    var gameSet = false
-    
-    let resultIdentifier = "reuseIdentifier"
-    
-    let layout = UICollectionViewFlowLayout()
-
-        
+    private let layout = UICollectionViewFlowLayout()
         
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // 初期化
-        firstSet()
+        // MVP - presenterをインスタンス化
+        presenter = GameFlowPresenter(view: self, model: model)
        
-        totalStones()
+        presenter.viewDidLoad()
         
-        collectionView.delegate = self
-        collectionView.dataSource = self
-
-        collectionView.allowsSelection = true
+        presenter.pickUpLatestInformation()
         
+        message.text = "置きたい場所をタッチしてください"
         
         // 盤の表示
         let deviceWidth = view.frame.width - 40
@@ -109,45 +56,192 @@ class ViewController: UIViewController {
         layout.sectionInset = UIEdgeInsets(top: 2, left: floatMargin, bottom: 0, right: floatMargin)
         collectionView.collectionViewLayout = layout
         
-        
-        // baseCell関連付け
-        let nib = UINib(nibName: "baseCell", bundle: nil)
-        collectionView!.register(nib, forCellWithReuseIdentifier: resultIdentifier)
-        
         // Core Dataの保存先を表示させる
             print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
-        message.text = Message.MyTurn.rawValue
     }
     
-    // Messageの表示を決めるメソッド
-    func setMessage(doPass: Int) -> Int {
-        var reValue = 0
-        switch doPass {
-        case 0:
-            self.message.text = Message.MyTurn.rawValue
-            reValue = 0
-        case 1:
-            self.message.text = Message.OppTurn.rawValue
-            reValue = 1
-        case 2:
-            self.message.text = Message.NotPutOnMyTurn.rawValue
-            self.dataUpdate()
-            self.playSound(name: "notice")
-            reValue = 1
-        case 3:
-            self.message.text = Message.NotPutOnOppTurn.rawValue
-            self.dataUpdate()
-            self.playSound(name: "notice")
-            reValue =  0
+    //MARK: Setup collectionView
+    func setupCollectionView() {
+        collectionView.allowsSelection = true
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        // baseCell関連付け
+        let nib = UINib(nibName: "baseCell", bundle: nil)
+        collectionView!.register(nib, forCellWithReuseIdentifier: resultIdentifier)
+    }
+
+
+    //MARK:  Restart Button
+    @IBAction func startButtonPressed(_ sender: UIButton) {
+        
+        self.message.text = presenter.firstSet()
+    }
+
+    
+    @IBAction func passButtonPressed(_ sender: UIButton) {
+//        coredataUpdate(procedures: procedures)
+    }
+
+
+    //MARK: Reverse Button
+    @IBAction func reverseButtonPressed(_ sender: UIButton) {
+        
+        presenter.reverse()
+         
+    }
+
+}
+
+//MARK: - Collectionview Datasource Methods
+extension ViewController: UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 64  //縦 * 横
+//        return items.count * items[0].count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        // セルを作成か再利用する　 カスタムセルに対応させるため、baseCell型に宣言、as! baseCellでキャスト
+        let cell: baseCell = collectionView.dequeueReusableCell(withReuseIdentifier: resultIdentifier, for: indexPath) as! baseCell
+        
+        // 枠線の色を黒に
+        cell.contentView.layer.borderColor = UIColor.black.cgColor
+        
+        // itemからデータを取得して枠線の太さに設定
+//        cell.contentView.layer.borderWidth = items[indexPath.row]
+        cell.contentView.layer.borderWidth = 1
+        
+        // cellのカラー
+        cell.contentView.backgroundColor = UIColor.init(red: 0.06, green: 0.67, blue: 0.52, alpha: 1.00)
+        
+        //カスタムセルに画像を貼り付ける、配列に対応させる。配列の値が1または２以外では.noneとする。これがないと表示がおかしくなる
+        let imageName = cell.cellStoneChenger(items: presenter.getItems(), indexPath: indexPath.row)
+
+        switch imageName {
+        case "white-stone", "black-stone":
+            cell.cellImage.image = UIImage(named: imageName)
         default:
-            break
+            cell.cellImage.image = .none
         }
-        return reValue
+        
+        return cell
     }
-    
-    // 石の数集計
-    func totalStones() {
+}
+
+//MARK: - Collectionview Delegate Methods
+extension ViewController: UICollectionViewDelegate {
+   
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let cell: baseCell = collectionView.dequeueReusableCell(withReuseIdentifier: resultIdentifier, for: indexPath) as! baseCell
+        
+        
+       
+        var gameMove: Bool = false {
+            didSet(oldValue) {
+                if gameMove == true {
+                    DispatchQueue.main.async {
+                    // アニメーション処理
+                        let changeStones = self.presenter.getChangeStones()
+                        let selectRow = IndexPath(item: self.presenter.getSelectRow(), section: 0)
+                        var indexPathes = [IndexPath]()
+                        for changeStone in changeStones {
+                            indexPathes.append(IndexPath(item: changeStone, section: 0))
+                        }
+                        let turn = self.presenter.getTurn()
+                        let imageName = turn ? "white-stone" : "black-stone"
+                       
+                        
+                        UIView.animate(withDuration: 0, animations: {
+                            cell.cellImage.image = UIImage(named: imageName)
+                            self.collectionView.reloadItems(at: [selectRow])
+                            
+                            // 音の再生
+                            self.playSound(name: "setSE")
+                        })
+                        
+                        
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        UIView.animate(withDuration: 0.5, animations: {
+                            cell.cellImage.image = UIImage(named: imageName)
+                            self.collectionView.reloadItems(at: indexPathes)
+                            
+                            
+                            
+                            // 音を再生
+                            self.playSound(name: "flip")
+                        }, completion: {(finished: Bool) in
+                            // messageの 描画のタイミング上ここに書く
+                            self.message.text = self.presenter.searchPositionable()
+                            
+                            sleep(2)
+                            
+                            //gameMoveの値をsetする
+                            gameMove = self.presenter.getMDGC()
+                            
+                               
+                        })
+                        }
+                    }
+                }
+            }
+        }
+        
+        // MVP - 起動
+        presenter.didSelectCell(row: indexPath.row)
+        // didSelectCell()によりdataの変更処理が終わった後、
+        //presenterのmodelDataCompをtrueとする
+        // gameMoveにmodelDatacompの値を入れて、描画処理が始まる
+        gameMove = presenter.getMDGC()
+       
+
+    }
+}
+
+//MARK: - AvaudioPlayer Delegate Method
+extension ViewController : AVAudioPlayerDelegate {
+    func playSound(name: String) {
+        guard let path = Bundle.main.path(forResource: name, ofType: "mp3") else {
+            print("音源ファイルが見つかりません")
+            return
+        }
+
+        do {
+            // AVAudioPlayerのインスタンス化
+            audioPlayer = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: path))
+
+            // AVAudioPlayerのデリゲートをセット
+            audioPlayer.delegate = self
+
+            // 音声の再生
+            audioPlayer.play()
+        } catch {
+            print("再生できません")
+        }
+    }
+
+}
+
+//MARK: - GameFlowPresenterOutput Methods
+extension ViewController: GameFlowPresenterOutput {
+    func updateInformation(myAttackTurn: Bool, procedures: Int16, items: [[Int]], selectRow: Int) {
+        
+        // 攻撃側のラベル表示
+        if myAttackTurn == true {
+            attacker.text = "あなたの番です"
+            collectionView.allowsSelection = true
+        }
+        else if myAttackTurn == false {
+            attacker.text = "相手の番です"
+            collectionView.allowsSelection = false
+        }
+        // 手数表示
+        procedure.text = String(procedures)
+        
+        // 石の数表示
         var white = 0
         var black = 0
         for i in 0 ..< items.count {
@@ -164,320 +258,15 @@ class ViewController: UIViewController {
         whiteStones.text = String(white)
         blackStones.text = String(black)
         
-        if white + black == items.count * items.count {
-            if white < black {
-                gameResult(finalSet: "Lose")
-            }
-            else if white > black {
-                gameResult(finalSet: "Win-pic")
-            }
-            else {
-                print("Draw")
-            }
-            gameSet = true
-        }
-    }
-    
-    // サーチ＆パス
-    func pass(observedValue : Int) -> Int {
-    
-        let allSearch = Positionable(arrays: items, myAttacks: myAttackTurn)
-//        print("positionable = \(allSearch.searchAll())")
-        
-        var doPass = observedValue
-        // サーチ結果、返り値が０かつgameSetがfalseの時 パスのプロセス
-        if allSearch.searchAll() == 0 && !gameSet {
-            // 自ターン後の場合 myAttackはfalseになっている
-            switch myAttackTurn {
-            case true:  // 自分がパスする場合、presenceOfPassをtrueとする
-                doPass = 2
-                // 今の手数をキーにcoredataからデータを抽出し、presenceOfPassをtrueに更新する
-                coredataUpdate(procedures: procedures)
-            
-            case false: // 相手がパスする場合
-                doPass = 3
-                
-            }
-           
-        // パスが必要ない場合
-        } else {
-            // 通常のプロセス
-            doPass = observedValue
-        }
-        
-        return doPass
-    }
-    
-    
-    
-    //情報の更新、Context保存
-    func  dataUpdate()  {
-        // 手数を＋１する
-        procedures += 1
-        procedure.text = String(procedures)
-        
-        // 攻守交代
-        myAttackTurn = !myAttackTurn
-        // 手を表示
-        if myAttackTurn == true {
-            attacker.text = "あなたの番です"
-        }
-        else if myAttackTurn == false {
-            attacker.text = "相手の番です"
-        }
-        
-        self.saveTransition()
-        
-        // 一度パスしたことを考慮した場合passの有無をfalseに戻す
-        presenceOfPass = false
-        
-
-    }
-    
-    // core data の情報の更新、パスする際にpresenceOfPassをtrueに更新するためのメソッド
-    func coredataUpdate(procedures: Int16) {
-        let request : NSFetchRequest<TransitionData> = TransitionData.fetchRequest()
-        let predicate = NSPredicate(format: "%K = %d", "procedure", procedures)
-        request.predicate = predicate
-
-        do {
-            // predicateの内容で抽出し、データを更新
-            requestTransitionData = try context.fetch(request)
-            for data in requestTransitionData {
-                data.presenceOfPass = true
-            }
-            // context保存
-            try context.save()
-            
-
-        } catch {
-            print("Error update from context \(error)")
-        }
-
-    }
-    
-    
-    // contextをcore dataに保存する
-    func saveTransition() {
-        // 状態をcontextに保存する
-        let newTransition = TransitionData(context: self.context)
-        newTransition.offenceSide = myAttackTurn
-        newTransition.procedure = procedures
-        newTransition.presenceOfPass = presenceOfPass
-        var position = ""
-        for i in 0 ..< items.count {
-            for j in 0 ..< items[i].count {
-                position += String(items[i][j])
-            }
-        }
-        newTransition.positionArray = position
-                
-        do {
-            try context.save()
-        } catch {
-            print("Error saving context \(error)")
-        }
-
-    }
-    
-    // core dataのcontextを呼び出す
-    func loadTransition() {
-        let request : NSFetchRequest<TransitionData> = TransitionData.fetchRequest()
-        do {
-            requestTransitionData = try context.fetch(request)
-        } catch {
-            print("Error fetching data from context \(error)")
-        }
-        
-        // contextからデータを取り出し、データを項目に貼り付けてい
-        
-        let item = requestTransitionData[Int(procedures)]
-        myAttackTurn = item.offenceSide
-        procedures = item.procedure
-        presenceOfPass = item.presenceOfPass
-        // 配列入れる
-        let positions = item.positionArray
-        
-        var count = 0
-        
-        if let start = positions?.startIndex {
-            for i in 0 ..< items.count {
-                for j in 0 ..< items[i].count {
-                    let off = positions?.index(start, offsetBy: count)
-                    let charCast = String(positions![off!])
-                    items[i][j] = Int(charCast)!
-                    count += 1
-                }
-            }
-        }
-        
-        print("Loadテスト\n", items)
-        
-        collectionView.reloadData()
-    }
-    
-    // 初期化する
-    func firstSet() {
-        
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TransitionData")
-        fetchRequest.returnsObjectsAsFaults = false
-        do {
-            let results = try context.fetch(fetchRequest)
-            for object in results {
-                guard let objectData = object as? TransitionData else {continue}
-                context.delete(objectData)
-            }
-        } catch let error {
-            print("Delete all data in error :", error)
-        }
-        
-        saveTransition()
-        
-        // 攻撃側、手数の表示
-        procedure.text = String(procedures)
-        attacker.text = "あなたの番です"
-    }
-    
-    // 指定したデータの削除
-    func deleteData(pros: Int16) {
-       
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TransitionData")
-        let predicate = NSPredicate(format: "procedure = %d", pros)
-        fetchRequest.predicate = predicate
-        
-        do {
-            let requests = try context.fetch(fetchRequest)
-            if(!requests.isEmpty) {
-                for i in 0..<requests.count {
-                    let deleteObject = requests[i] as! TransitionData
-                    context.delete(deleteObject)
-                }
-            }
-
-        } catch {
-            print("deleteData is error : ", error)
-        }
-    }
-
-
-    // 初めからボタン
-    @IBAction func startButtonPressed(_ sender: UIButton) {
-        let alert = UIAlertController(title: "CAUTION!", message: "今のゲームを破棄しますか？", preferredStyle: .alert)
-        let action = UIAlertAction(title: "はい", style: .default) { (action) in
-            // 初期状態を変数に入れる
-            self.items = [
-            [0, 0, 0, 0, 0, 0, 0,0],
-            [0, 0, 0, 0, 0, 0, 0,0],
-            [0, 0, 0, 0, 0, 0, 0,0],
-            [0, 0, 0, 1, 2, 0, 0,0],
-            [0, 0, 0, 2, 1, 0, 0,0],
-            [0, 0, 0, 0, 0, 0, 0,0],
-            [0, 0, 0, 0, 0, 0, 0,0],
-            [0, 0, 0, 0, 0, 0, 0,0]
-            ]
-            
-            self.procedures = 0
-            self.myAttackTurn = true
-            self.presenceOfPass = false
-            
-            // core data に初期状態の情報を保存
-            self.saveTransition()
-            
-            // これまでの進行状況をcore data から破棄
-            self.firstSet()
-            self.collectionView.reloadData()
-            self.totalStones()
+        if selectRow == -1 {
+            collectionView.reloadData()
+        } else if selectRow == -2 {
+            self.playSound(name: "notice")
+            collectionView.reloadData()
             
         }
-        let noAction = UIAlertAction(title: "いいえ", style: .cancel, handler: nil)
-        alert.addAction(action)
-        alert.addAction(noAction)
-        present(alert, animated: true, completion: nil)
-    }
-
-
-    // パスボタン
-    @IBAction func passButtonPressed(_ sender: UIButton) {
-        coredataUpdate(procedures: procedures)
-    }
-
-
-    //戻るボタンの処理
-    @IBAction func reverseButtonPressed(_ sender: UIButton) {
-        // 手が０の時処理しない
-        if procedures == 0 {
-            return
-        }
-        
-        let request : NSFetchRequest<TransitionData> = TransitionData.fetchRequest()
-        let deleteIndex = procedures
-        // contextにStringで保存した石の配列データを入れる変数
-        var positions = ""
-        
-        
-        
-        repeat {
-            // procedures番目 を -2 したデータを呼び出し、ロードする
-            print("ループスタート時のprocedures: \(procedures)")
-            let index = procedures - 2
-            let predicate = NSPredicate(format: "procedure = %d", index)
-            request.predicate = predicate
-            do {
-                requestTransitionData = try context.fetch(request)
-                for data in requestTransitionData {
-                    myAttackTurn = data.value(forKey: "offenceSide") as! Bool
-                    procedures = data.value(forKey: "procedure") as! Int16
-                    positions = data.value(forKey: "positionArray") as! String
-                    presenceOfPass = data.value(forKey: "presenceOfPass") as! Bool
-                }
-            } catch {
-                print("Error fetching data from context \(error)")
-            }
-            
-            // procedure番目のデータを削除する
-            deleteData(pros: deleteIndex)
-            do {
-                try context.save()
-            } catch {
-                print("\(error)")
-            }
-            print("presenceOfPass:", presenceOfPass, "ループ終盤のprocedures: \(procedures)")
-        } while presenceOfPass
-        
- //     contextから取り出したデータを画面に表示する
-        
-        // contextからのデータを元に手を表示
-        if myAttackTurn == true {
-            attacker.text = "あなたの番です"
-        } else {
-            attacker.text = "相手の番です"
-        }
-        
-        // 手数を表示する
-        procedure.text = String(procedures)
-        
-        // 配置をcontextで取得したdataの通りにする
-        var count = 0
-        
-        let start = positions.startIndex
-        
-        for i in 0 ..< items.count {
-            for j in 0 ..< items[i].count {
-                let off = positions.index(start, offsetBy: count)
-                let charCast = String(positions[off])
-                items[i][j] = Int(charCast)!
-                count += 1
-            }
-        }
-        
-//        print(items)
-        
-        totalStones()
-        collectionView.reloadData()
-        
         
     }
-    
     // 勝敗表示
     func gameResult(finalSet: String) {
         let image = UIImageView(image: UIImage(named: finalSet))
@@ -521,213 +310,3 @@ class ViewController: UIViewController {
         
     }
 }
-
-extension ViewController: UICollectionViewDataSource {
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return 64  縦 * 横
-        return items.count * items[0].count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        // セルを作成か再利用する　 カスタムセルに対応させるため、baseCell型に宣言、as! baseCellでキャスト
-        let cell: baseCell = collectionView.dequeueReusableCell(withReuseIdentifier: resultIdentifier, for: indexPath) as! baseCell
-        
-        // カスタムセルに画像を貼り付ける、配列に対応させる。配列の値が1または２以外では.noneとする。これがないと表示がおかしくなる
-        if items[indexPath.row / items.count][indexPath.row % items.count] == 1 {
-            cell.cellImage.image = UIImage(named: "white-stone")
-        } else if items[indexPath.row / items.count][indexPath.row % items.count] == 2 {
-            cell.cellImage.image = UIImage(named: "black-stone")
-        } else {
-            cell.cellImage.image = .none
-        }
-        
-        
-        // 枠線の色を黒に
-        cell.contentView.layer.borderColor = UIColor.black.cgColor
-        
-        // itemからデータを取得して枠線の太さに設定
-//        cell.contentView.layer.borderWidth = items[indexPath.row]
-        cell.contentView.layer.borderWidth = 1
-        
-        // cellのカラー
-        cell.contentView.backgroundColor = UIColor.cyan
-        
-        // 選択中のセルの背景をグレーに
-        let bgView = UIView()
-        bgView.backgroundColor = .lightGray
-        cell.selectedBackgroundView = bgView
-        
-        return cell
-    }
-}
-
-extension ViewController: UICollectionViewDelegate {
-   
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        let cell: baseCell = collectionView.dequeueReusableCell(withReuseIdentifier: resultIdentifier, for: indexPath) as! baseCell
-        // SuperRuleをインスタンス化しサーチ
-        let search = SuperRule()
-        // 置ける場所があるかを調べる、availableAreaにはひっくり返せる石の数がInt型で入る
-        let availableArea = search.searchPosition(row: indexPath.row / items.count, col: indexPath.row % items.count, items: items, myAttackTurn: myAttackTurn)
-        // Flipクラスのインスタンス化
-        let flip = Flip(arrays: items)
-        
-        // プロパティ監視、observedが1以上の場合、opponentの番
-        var observed : Int = 0 {
-            
-            didSet(oldValue) {
-                
-                if(observed == 1) {
-
-                    if myAttackTurn == false {
-                        
-                        let opponent = Opponent(arrays: items)
-                        opponent.checkAndFlip()
-                        items = opponent.getItems()
-
-                        totalStones()
-                        
-                        dataUpdate()
-                        
-                        // ひっくり返る場所を取得する
-                        let otherFlips = opponent.getAnimesItems()
-                        // 変化させるIndexPathを入れる配列型
-                        var indexPathes = [IndexPath]()
-                        
-                        let dopass = self.pass(observedValue: 0)
-                        
-                        var setMessageValue = 0
-                      
-                        
-                        // アニメーション処理
-                        UIView.animate(withDuration: 0, animations: {
-                            //opponentが石を置く場所を取得する
-                            let opponentInt = opponent.getOpponentPosition()
-                            let opponentIndexPath = IndexPath(item: opponentInt, section: 0)
-                            cell.cellImage.image = UIImage(named: "black-stone")
-                            self.collectionView.reloadItems(at: [opponentIndexPath])
-
-                            // 音を再生
-                            self.playSound(name: "setSE")
-                            
-                            // 対応するMessageを表示する。
-                            setMessageValue = self.setMessage(doPass: dopass)
-                            
-
-                        })
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            
-
-                            for otherFlip in otherFlips {
-                                indexPathes.append(IndexPath(item: otherFlip, section: 0))
-                            }
-
-                            UIView.animate(withDuration: 0.5, animations: {
-                                cell.cellImage.image = UIImage(named: "black-stone")
-                                self.collectionView.reloadItems(at: indexPathes)
-
-                                // 音を再生
-                                self.playSound(name: "flip")
-
-                            }, completion: {(finished : Bool) in
-                                sleep(2)
-                                observed = setMessageValue
-                            })
-                        }
-                    }
-
-                }
-            }
-        }
-        
-
-       
-        // ひっくり返すことができ、かつ置き場所に何もないことが確認された場合の処理を書く
-        if availableArea > 0 && items[indexPath.row / items.count][indexPath.row % items.count] == 0 {
-               
-            // タッチした場所から相手の番に移るための処理
-            flip.flipPosition(row: indexPath.row / items.count, col: indexPath.row % items.count, myAttackTurn: myAttackTurn)
-                
-            items = flip.getItems()
-            
-            
-            // 手数と攻守の情報を更新とitems配列をcoredataに保存
-            dataUpdate()
-                
-            totalStones()
-            
-            // アニメーション処理のための準備
-            let otherFlips = flip.getAnimesItems()
-            // 変化させるIndexPathを入れる配列型
-            var indexPathes = [IndexPath]()
-            
-            // パスする必要があるかを確認
-            let dopass = self.pass(observedValue: 1)
-            
-            var setMessageValue = 0
-            
-            // アニメーション処理 （時間を遅らせないとUIアニメーションが実行される前にデータが更新され不具合が出る）
-                
-            UIView.animate(withDuration: 0, animations: {
-                
-                cell.cellImage.image = UIImage(named: "white-stone")
-                self.collectionView.reloadItems(at: [indexPath])
-                
-                // 音を再生
-                self.playSound(name: "setSE")
-                
-                // 対応するMessageを表示する。
-                setMessageValue = self.setMessage(doPass: dopass)
-
-            })
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    
-                for otherFlip in otherFlips {
-                    indexPathes.append(IndexPath(item: otherFlip, section: 0))
-                }
-                    
-                UIView.animate(withDuration: 0.5, animations: {
-                    cell.cellImage.image = UIImage(named: "white-stone")
-                    self.collectionView.reloadItems(at: indexPathes)
-                    
-                    // 音を再生
-                    self.playSound(name: "flip")
-                          
-                }, completion: {(finished : Bool) in
-                    sleep(2)
-                    observed = setMessageValue
-                    
-                })
-            }
-                
-        }
-    }
-}
-
-extension ViewController : AVAudioPlayerDelegate {
-    func playSound(name: String) {
-        guard let path = Bundle.main.path(forResource: name, ofType: "mp3") else {
-            print("音源ファイルが見つかりません")
-            return
-        }
-        
-        do {
-            // AVAudioPlayerのインスタンス化
-            audioPlayer = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: path))
-            
-            // AVAudioPlayerのデリゲートをセット
-            audioPlayer.delegate = self
-            
-            // 音声の再生
-            audioPlayer.play()
-        } catch {
-            print("再生できません")
-        }
-    }
-    
-}
-
-

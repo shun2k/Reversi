@@ -4,7 +4,7 @@
 //
 //  Created by 岸本俊祐 on 2020/02/16.
 //  Copyright © 2020 岸本俊祐. All rights reserved.
-//
+// opponent側がどのcellを選ぶかを決定するモジュール
 
 import Foundation
 
@@ -29,13 +29,15 @@ class Opponent : Flip {
         opponentSelectedArray = strongArray + otherArray + weakArray
     }
     
-    
+    // 優先順位の高い順番に石を置けるかどうかをチェックする
     func checkAndFlip() {
         for i in 0 ..< opponentSelectedArray.count {
             let row = opponentSelectedArray[i] / items.count
             let col = opponentSelectedArray[i] % items.count
             if items[row][col] == 0 {
+                //置ける場所があった時の処理
                 if searchPosition(row: row, col: col, items: items, myAttackTurn: false) > 0 {
+                    // ひっくり返す処理
                     flipPosition(row: row, col: col, myAttackTurn: false)
                     opponentPosition = opponentSelectedArray[i]
                     break
@@ -44,11 +46,8 @@ class Opponent : Flip {
         }
     }
     
+    // 相手が置いた石の場所を取り出す
     func getOpponentPosition() -> Int {
         return opponentPosition
     }
-    
-   
-    
-    
 }
